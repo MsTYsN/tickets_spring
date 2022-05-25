@@ -1,0 +1,159 @@
+<!DOCTYPE html>
+<html lang="fr" xmlns:th="http://www.thymeleaf.org" xmlns:sec="http://www.w3.org/1999/xhtml">
+
+
+<head>
+    <title>Développeurs</title>
+    <!-- Mobile Specific Metas -->
+    <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
+
+    <!-- Google Font -->
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&display=swap"
+          rel="stylesheet">
+    <!-- CSS -->
+    <link rel="stylesheet" type="text/css" href="../vendors/styles/core.css">
+    <link rel="stylesheet" type="text/css" href="../vendors/styles/icon-font.min.css">
+    <!-- switchery css -->
+    <link rel="stylesheet" type="text/css" href="../src/plugins/switchery/switchery.min.css">
+    <!-- bootstrap-tagsinput css -->
+    <link rel="stylesheet" type="text/css" href="../src/plugins/bootstrap-tagsinput/bootstrap-tagsinput.css">
+    <!-- bootstrap-touchspin css -->
+    <link rel="stylesheet" type="text/css" href="../src/plugins/bootstrap-touchspin/jquery.bootstrap-touchspin.css">
+    <link rel="stylesheet" type="text/css" href="../vendors/styles/style.css">
+</head>
+
+
+<body>
+
+<div class="header">
+    <div class="header-left">
+        <div class="menu-icon dw dw-menu"></div>
+    </div>
+    <div class="header-right">
+        <a class="p-3" href="/logout"><i class="dw dw-logout" style="width: 200px;height: 60px"></i> Se déconnecter</a >
+    </div>
+</div>
+
+<div class="left-side-bar">
+    <div class="brand-logo text-center p-2 mb-3">
+        <img src="../vendors/images/gtickets.png" alt="" class="light-logo" style="width: 130px;height: 80px;">
+        <div class="close-sidebar" data-toggle="left-sidebar-close">
+            <i class="ion-close-round"></i>
+        </div>
+    </div>
+    <div class="menu-block customscroll">
+        <div class="sidebar-menu">
+            <ul id="accordion-menu">
+                <li style="visibility: hidden">Hidden List Item</li>
+                <li sec:authorize="hasAnyAuthority('ADMIN')">
+                    <a class="dropdown-toggle no-arrow" th:href="@{/admin}">
+                        <span class="micon dw dw-user-11"></span><span class="mtext">Gestion Admin</span>
+                    </a>
+                </li>
+                <li sec:authorize="hasAnyAuthority('CLIENT')">
+                    <a class="dropdown-toggle no-arrow" th:href="@{/client}">
+                        <span class="micon dw dw-user-12"></span><span class="mtext">Gestion Client</span>
+                    </a>
+                </li>
+                <li sec:authorize="hasAnyAuthority('DEV')">
+                    <a class="dropdown-toggle no-arrow" th:href="@{/dev}">
+                        <span class="micon dw dw-personal-computer"></span><span class="mtext">Gestion Développeur</span>
+                    </a>
+                </li>
+            </ul>
+        </div>
+    </div>
+</div>
+
+<div class="main-container">
+    <div class="pd-ltr-20 xs-pd-20-10">
+        <div class="min-height-200px">
+            <!-- Default Basic Forms Start -->
+            <div class="pd-20 card-box mb-30">
+                <div class="clearfix mb-3">
+                    <div class="pull-left">
+                        <h4 class="text-blue h4">Mettre à jour le statut d'un ticket</h4>
+                    </div>
+                </div>
+                <form th:action="@{/dev/miseajour}" method="post">
+                    <div class="row">
+                        <div class="col-md-12">
+                            <div class="form-group">
+                                <label>Statut:</label><br>
+                                <select class="form-control" name="statut" id="statut">
+                                    <option>En cours</option>
+                                    <option>Résolu</option>
+                                </select>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="row">
+                        <div class="col-md-12">
+                            <div class="form-group">
+                                <label>Ticket:</label><br>
+                                <select class="form-control" name="ticket" id="ticket">
+                                    <option th:each="ticket:${tickets}"
+                                            th:value="${ticket.getId()}"
+                                            th:text="${ticket.getDescription()}">
+                                    </option>
+                                </select>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="row">
+                        <div class="col-sm-3 col-md-2 mb-3">
+                            <input class="btn btn-primary btn-sm btn-block" type="submit" value="Mettre à jour" id="ajouter">
+                        </div>
+                    </div>
+                </form>
+                <div class="card-box mb-30">
+                    <div class="pd-20">
+                        <h4 class="text-blue h4">Liste des tickets attribués au développeur</h4>
+                    </div>
+                    <div class="table-responsive pre-scrollable">
+                        <table class="table table-hover">
+                            <thead>
+                            <tr>
+                                <th class="text-center">Description</th>
+                                <th class="text-center">Environnement</th>
+                                <th class="text-center">Logiciel</th>
+                                <th class="text-center">Urgence</th>
+                                <th class="text-center">Statut</th>
+                                <th class="text-center">Client</th>
+                            </tr>
+                            </thead>
+                            <tbody name="table" id="table">
+                            <tr th:each="ticket:${tickets}">
+                                <td class="text-center" th:text="${ticket.getDescription()}">/td>
+                                <td class="text-center" th:text="${ticket.getEnvironnement()}">/td>
+                                <td class="text-center" th:text="${ticket.getLogiciel()}">/td>
+                                <td class="text-center" th:text="${ticket.getUrgence()}">/td>
+                                <td class="text-center" th:text="${ticket.getStatut()}">/td>
+                                <td class="text-center" th:text="${ticket.getClient().getNom()}">/td>
+                            </tr>
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+                <!-- Simple Datatable End -->
+            </div>
+        </div>
+    </div>
+</div>
+
+</body>
+
+<!-- js -->
+<script src="../vendors/scripts/core.js"></script>
+<script src="../vendors/scripts/script.min.js"></script>
+<script src="../vendors/scripts/process.js"></script>
+<script src="../vendors/scripts/layout-settings.js"></script>
+<!-- switchery js -->
+<script src="../src/plugins/switchery/switchery.min.js"></script>
+<!-- bootstrap-tagsinput js -->
+<script src="../src/plugins/bootstrap-tagsinput/bootstrap-tagsinput.js"></script>
+<!-- bootstrap-touchspin js -->
+<script src="../src/plugins/bootstrap-touchspin/jquery.bootstrap-touchspin.js"></script>
+<script src="../vendors/scripts/advanced-components.js"></script>
+
+</html>
